@@ -29,11 +29,11 @@ app.post("/api/user/profile", upload.single("profilePic"),(req,res)=>{
     }else{
         const filename = req.file.path;
         const id = req.body.id;
-         db.query("UPDATE users SET profilePic=? WHERE id=?",[filename, id] ,(eror, result)=>{
-            console.log(eror);
-        if(eror) return response.status(500).json({message : "Server internal error" + eror});
-        response.status(201).json({id: result.insertId, name : name, email: email});
-        });
+        //  db.query("UPDATE users SET profilePic=? WHERE id=?",[filename, id] ,(eror, result)=>{
+        //     console.log(eror);
+        // if(eror) return response.status(500).json({message : "Server internal error" + eror});
+        // response.status(201).json({id: result.insertId, name : name, email: email});
+        // });
         res.status(200).json({
             message: "Profile pic uploaded"
         });
@@ -41,18 +41,18 @@ app.post("/api/user/profile", upload.single("profilePic"),(req,res)=>{
 });
 
 // password hashing -register
-app.post("/api/user", async (reqest, response)=> {
-    const name = reqest.body.name;
-    const email = reqest.body.email;
-    const password = reqest.body.password;
-    const passwordHash =await bcrypt.hash(password, 10) // 2 ka power 10 standard 
-        db.query("INSERT INTO users(name, email, password) VALUES (? , ?, ?)",[name, email,passwordHash] ,(eror, result)=>{
-            console.log(eror);
-        if(eror) return response.status(500).json({message : "Server internal error" + eror});
-        response.status(201).json({id: result.insertId, name : name, email: email});
+// app.post("/api/user", async (reqest, response)=> {
+//     const name = reqest.body.name;
+//     const email = reqest.body.email;
+//     const password = reqest.body.password;
+//     const passwordHash =await bcrypt.hash(password, 10) // 2 ka power 10 standard 
+//         db.query("INSERT INTO users(name, email, password) VALUES (? , ?, ?)",[name, email,passwordHash] ,(eror, result)=>{
+//             console.log(eror);
+//         if(eror) return response.status(500).json({message : "Server internal error" + eror});
+//         response.status(201).json({id: result.insertId, name : name, email: email});
 
-    } );
-});
+//     } );
+// });
 //2 user
 
 // const users = [];
@@ -113,18 +113,18 @@ app.delete("/api/users/:id", (require, response)=> {
 
 
 
-//Register
-app.post("/api/user/register",async(request,response)=>{
-  const name= request.body.name;
-  const email = request.body.email;
-  const password = request.body.password;
-  const hashPassword = await bcrypt.hash("" +password +"",10)
-  console.log(hashPassword)
-  db.query("INSERT INTO users(name,email,password) VALUES (?,?,?)",[name,email,hashPassword],(error,result)=>{
-    if(error)response.status(500).json({message:"Server internal error"})
-      response.status(201).json({id:result.insertId, name:name,email:email})
-  });
-});
+// //Register
+// app.post("/api/user/register",async(request,response)=>{
+//   const name= request.body.name;
+//   const email = request.body.email;
+//   const password = request.body.password;
+//   const hashPassword = await bcrypt.hash("" +password +"",10)
+//   console.log(hashPassword)
+//   db.query("INSERT INTO users(name,email,password) VALUES (?,?,?)",[name,email,hashPassword],(error,result)=>{
+//     if(error)response.status(500).json({message:"Server internal error"})
+//       response.status(201).json({id:result.insertId, name:name,email:email})
+//   });
+// });
 
 
 //Login
@@ -153,46 +153,46 @@ app.post("/api/user/register",async(request,response)=>{
 
 // Get token 
 
-app.get("/users",(request,response)=>{
-    const token = request.headers.authorization;
-    const secretkey = "dfhfjfhfjjf75b";
-    jwt.verify(token, secretkey,(error, result)=>{
-        if(error){
-            response.status(400).json({massage: "unauthorized"})
-        }
-        else{
-            response.status(200).json({result})
-        }
-    })
-})
+// app.get("/users",(request,response)=>{
+//     const token = request.headers.authorization;
+//     const secretkey = "dfhfjfhfjjf75b";
+//     jwt.verify(token, secretkey,(error, result)=>{
+//         if(error){
+//             response.status(400).json({massage: "unauthorized"})
+//         }
+//         else{
+//             response.status(200).json({result})
+//         }
+//     })
+// })
 
 
 
 //token login
 // Hash Password Login.....
 
-app.post("/users/login",async(request,response)=>{
-    const email = request.body.email;
-    const password = request.body.password;
+// app.post("/users/login",async(request,response)=>{
+//     const email = request.body.email;
+//     const password = request.body.password;
 
-    db.query("SELECT * FORM users WHERE email=?",[email],async(error, result)=>{
-        if(error) return response.status(500).json({massage : "Server internal error"});
-        const dbPassword = result[0].password;
-        const name = result[0].name;
-        const email = result[0].email;
-        const isPasswordSame = await bcrypt.compare(password,dbPassword);
-        if(isPasswordSame){
-            const secretkey = "dfhfjfhfjjf75b";
-            const token = jwt.sign({name:name,email:email},secretkey,{expiresIn:"1h"});  //token
+//     db.query("SELECT * FORM users WHERE email=?",[email],async(error, result)=>{
+//         if(error) return response.status(500).json({massage : "Server internal error"});
+//         const dbPassword = result[0].password;
+//         const name = result[0].name;
+//         const email = result[0].email;
+//         const isPasswordSame = await bcrypt.compare(password,dbPassword);
+//         if(isPasswordSame){
+//             const secretkey = "dfhfjfhfjjf75b";
+//             const token = jwt.sign({name:name,email:email},secretkey,{expiresIn:"1h"});  //token
 
-            response.status(200).json({massage: "Login Success", token : token})
-        }
-        else{
-            response.status(200).json({massage: "Login failed"})
-        }
+//             response.status(200).json({massage: "Login Success", token : token})
+//         }
+//         else{
+//             response.status(200).json({massage: "Login failed"})
+//         }
 
-    });
-})
+//     });
+// })
 
 
 
